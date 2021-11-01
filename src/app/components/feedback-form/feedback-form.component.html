@@ -1,0 +1,23 @@
+<form [formGroup]="feedbackForm" (submit)="saveFeedback()">
+  <div class="close-icon">
+    <span (click)="closeFrom()">&times;</span>
+  </div>
+  <div class="form-fields">
+    <input
+      type="text"
+      autofocus
+      (keyup.enter)="saveFeedback()"
+      formControlName="feedbackText"
+    />
+    <button type="submit">Save</button>
+    <div
+      class="error-msg"
+      *ngIf="
+        feedbackForm.controls['feedbackText'].touched &&
+        feedbackForm.controls['feedbackText'].errors?.required
+      "
+    >
+      Please enter feedback to save it!
+    </div>
+  </div>
+</form>

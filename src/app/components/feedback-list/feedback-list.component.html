@@ -1,0 +1,4 @@
+<section *ngFor="let feedback of feedbacks; trackBy: trackByFeedback">
+  <p>{{ feedback.time | time }}</p>
+  <p class="text">{{ feedback.feedbackText }}</p>
+</section>

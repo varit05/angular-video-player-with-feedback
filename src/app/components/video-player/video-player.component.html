@@ -1,0 +1,57 @@
+<div>
+  <section class="video-player">
+    <video
+      #video
+      controls
+      crossOrigin="anonymous"
+      muted="muted"
+      autoplay="true"
+      (click)="playOrPauseVideo()"
+      (timeupdate)="updateVideoProgressBar()"
+      preload="auto"
+      [poster]="source.poster"
+    >
+      <source [src]="source.video" type="video/mp4" />
+      <p>Sorry, your browser doesn't support embedded videos.</p>
+    </video>
+    <section class="timeline" [style.visibility]="timelineVisibility">
+      <div
+        #timelineWrapper
+        class="timeline-progress"
+        (click)="handleTimelineProgress($event)"
+      >
+        <div
+          class="timeline-progress-bar"
+          [style.width.px]="currentProgressBar"
+        >
+          <span
+            class="timeline-progress-bar-time"
+            [style.left.px]="currentProgressBar - 5"
+            >{{ video.currentTime | time }}</span
+          >
+          <span
+            class="timeline-progress-bar-circle"
+            [style.left.px]="currentProgressBar - 2"
+          ></span>
+        </div>
+        <div class="timeline-progress-feedback">
+          <span
+            *ngFor="let feedback of feedbacks; trackBy: trackByFeedback"
+            [style.left.px]="feedback.barLength"
+          ></span>
+        </div>
+      </div>
+    </section>
+    <section class="feedback-form" *ngIf="!isVideoPlaying">
+      <app-feedback-form
+        (formExit)="playOrPauseVideo()"
+        (formSubmit)="saveFeedback($event)"
+      ></app-feedback-form>
+    </section>
+  </section>
+  <section class="feedback-list">
+    <app-feedback-list [feedbacks]="feedbacks"></app-feedback-list>
+  </section>
+</div>
+
+<ng-container *ngIf="feedbacks$ | async"></ng-container>
