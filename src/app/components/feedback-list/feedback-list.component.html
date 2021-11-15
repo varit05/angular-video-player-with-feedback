@@ -1,4 +1,28 @@
-<section *ngFor="let feedback of feedbacks; trackBy: trackByFeedback">
-  <p>{{ feedback.time | time }}</p>
-  <p class="text">{{ feedback.feedbackText }}</p>
+<section
+  *ngFor="let feedback of feedbacks; trackBy: trackByFeedback"
+  [ngClass]="{
+    selected: selectedFeedback === feedback,
+    completed: feedback.isCompleted === true
+  }"
+>
+  <div class="feedbacks">
+    <p>{{ feedback.time | time }}</p>
+    <p class="text">{{ feedback.feedbackText }}</p>
+  </div>
+  <div class="replies" *ngFor="let reply of feedback.replies">
+    <p>{{ reply.time | date: "dd-MM-YYYY" }}</p>
+    <p class="text">{{ reply.text }}</p>
+  </div>
+  <div class="reply" *ngIf="!feedback.isCompleted">
+    <textarea
+      [formControl]="reply"
+      placeholder="Reply to feedback..."
+      cols="3"
+      row="2"
+    ></textarea>
+    <div class="reply-buttons">
+      <button (click)="sendReply(feedback)">Send</button>
+      <button (click)="markResolved(feedback)">Mark Resolved</button>
+    </div>
+  </div>
 </section>
