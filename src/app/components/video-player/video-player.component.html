@@ -1,57 +1,82 @@
-<div>
-  <section class="video-player">
-    <video
-      #video
-      controls
-      crossOrigin="anonymous"
-      muted="muted"
-      autoplay="true"
-      (click)="playOrPauseVideo()"
-      (timeupdate)="updateVideoProgressBar()"
-      preload="auto"
-      [poster]="source.poster"
+<section class="video-player" #videoPlayer>
+  <video
+    #video
+    controls
+    crossOrigin="anonymous"
+    muted="muted"
+    autoplay="true"
+    playsinline
+    (click)="playOrPauseVideo()"
+    (timeupdate)="updateVideoProgressBar()"
+    preload="auto"
+    [poster]="source.poster"
+  >
+    <source [src]="source.video" type="video/mp4" />
+    <p>Sorry, your browser doesn't support embedded videos.</p>
+  </video>
+  <section class="timeline" [style.visibility]="timelineVisibility">
+    <div #timelineWrapper [@fadeInOutAnimation] *ngIf="timelineVisibility === 'visible'">
+    <div
+      class="timeline-progress"
+      (click)="handleTimelineProgress($event)"
     >
-      <source [src]="source.video" type="video/mp4" />
-      <p>Sorry, your browser doesn't support embedded videos.</p>
-    </video>
-    <section class="timeline" [style.visibility]="timelineVisibility">
-      <div
-        #timelineWrapper
-        class="timeline-progress"
-        (click)="handleTimelineProgress($event)"
-      >
-        <div
-          class="timeline-progress-bar"
-          [style.width.px]="currentProgressBar"
+      <div class="timeline-progress-bar" [style.width.px]="currentProgressBar">
+        <span
+          class="timeline-progress-bar-time"
+          [style.left.px]="currentProgressBar - 5"
+          >{{ video.currentTime | time }}</span
         >
-          <span
-            class="timeline-progress-bar-time"
-            [style.left.px]="currentProgressBar - 5"
-            >{{ video.currentTime | time }}</span
-          >
-          <span
-            class="timeline-progress-bar-circle"
-            [style.left.px]="currentProgressBar - 2"
-          ></span>
-        </div>
-        <div class="timeline-progress-feedback">
-          <span
-            *ngFor="let feedback of feedbacks; trackBy: trackByFeedback"
-            [style.left.px]="feedback.barLength"
-          ></span>
-        </div>
+        <span
+          class="timeline-progress-bar-circle"
+          [style.left.px]="currentProgressBar - 2"
+        ></span>
       </div>
-    </section>
-    <section class="feedback-form" *ngIf="!isVideoPlaying">
-      <app-feedback-form
-        (formExit)="playOrPauseVideo()"
-        (formSubmit)="saveFeedback($event)"
-      ></app-feedback-form>
-    </section>
+    </div>
+    <div class="timeline-feedback">
+      <span
+        (click)="handleFeedbackClick(feedback)"
+        *ngFor="let feedback of feedbacks; trackBy: trackByFeedback"
+        [style.left.px]="feedback.barLength"
+      ></span>
+    </div>
+    <div class="timeline-controls">
+      <div class="timeline-controls-left">
+        <button (click)="forwardAndBackwardTime(-1)" type="button">
+          <i class="fa fa-backward"> </i>
+        </button>
+        <button (click)="playOrPauseVideo()" type="button">
+          <i *ngIf="!isVideoPlaying" class="fa fa-play"> </i>
+          <i *ngIf="isVideoPlaying" class="fa fa-pause"> </i>
+        </button>
+        <button (click)="forwardAndBackwardTime(1)" type="button">
+          <i class="fa fa-forward"> </i>
+        </button>
+      </div>
+      <div class="timeline-controls-right">
+        <input
+          [formControl]="volumnControl"
+          (change)="handleVolumnChange()"
+          type="range"
+          min="0"
+          max="100"
+          step="1"
+        />
+        <button (click)="toggleFullScreenVideo()" type="button">
+          <i class="fa fa-expand"></i>
+        </button>
+      </div>
+    </div>
+  </div>
   </section>
-  <section class="feedback-list">
-    <app-feedback-list [feedbacks]="feedbacks"></app-feedback-list>
+  <section class="feedback-form" *ngIf="!isVideoPlaying">
+    <app-feedback-form
+      (formExit)="playOrPauseVideo()"
+      (formSubmit)="saveFeedback($event)"
+    ></app-feedback-form>
   </section>
-</div>
+</section>
+<section class="feedback-list">
+  <app-feedback-list [feedbacks]="feedbacks" [selectedFeedback]="selectedFeedback"></app-feedback-list>
+</section>
 
 <ng-container *ngIf="feedbacks$ | async"></ng-container>
