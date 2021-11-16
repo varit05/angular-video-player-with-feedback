@@ -22,7 +22,7 @@ import { FeedbackService } from 'src/app/services/feedback/feedback.service';
 })
 export class VideoPlayerComponent {
   @Input() source!: VideoSource;
-  volumnControl = new FormControl(50);
+  volumnControl = new FormControl(0);
   defaultForwardAndBackwardTime = 5;
   isVideoPlaying = true;
   currentProgressBar = 0;
@@ -41,7 +41,6 @@ export class VideoPlayerComponent {
   @ViewChild('videoPlayer')
   videoPlayerElement!: ElementRef<HTMLDivElement>;
 
-
   private get player(): HTMLVideoElement {
     return this.videoElement.nativeElement;
   }
@@ -59,8 +58,11 @@ export class VideoPlayerComponent {
   ngAfterViewInit(): void {
     // Removing default video tag control and add custom timeline to video tag
     this.player.removeAttribute('controls');
+    this.player.volume = 0;
     // Once view is loaded, make custom timeline visible on video
     this.timelineVisibility = 'visible';
+    this.videoPlayer.classList.add('on');
+    this.videoPlayer.classList.remove('off');
   }
 
   // play and pause video on click on video viewport and close button as well
@@ -76,6 +78,7 @@ export class VideoPlayerComponent {
 
   // Returns current Length of on basis of the video currentTime and total duration of video
   currentProgressBarLength(): number {
+    console.log(this.player.volume);
     return (
       this.timelineWrapper.clientWidth *
       (this.player.currentTime / this.player.duration)
@@ -94,7 +97,7 @@ export class VideoPlayerComponent {
       barLength: this.currentProgressBarLength(),
       feedbackText,
       isCompleted: false,
-      replies: []
+      replies: [],
     });
     this.playOrPauseVideo();
   }
@@ -122,13 +125,12 @@ export class VideoPlayerComponent {
       this.videoPlayer.classList.remove('on');
       this.videoPlayer.classList.add('off');
     } else {
-      if(document.exitFullscreen) {
+      if (document.exitFullscreen) {
         document.exitFullscreen();
       }
       this.videoPlayer.classList.add('on');
       this.videoPlayer.classList.remove('off');
     }
-
   }
 
   // Change the volumn
