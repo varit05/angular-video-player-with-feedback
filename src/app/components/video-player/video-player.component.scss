@@ -1,7 +1,11 @@
 .video-player {
   position: relative;
   text-align: center;
-  width: 700px;
+  width: 100%;
+
+  @media only screen and (min-width : 768px) {
+    width: 700px;
+  }
 
   &:hover .timeline,
   &:focus .timeline {
@@ -41,6 +45,7 @@
           position: absolute;
           top: -25px;
           color: white;
+          width: 75px;
         }
 
         &-circle {
@@ -66,6 +71,11 @@
         width: 10px;
         height: 30px;
         background: black;
+
+        &:hover {
+          background: orangered;
+          transform: scale(1.1);
+         }
       }
     }
     &-controls {
@@ -81,6 +91,14 @@
         height: 40px;
         border-radius: 50%;
         display: inline-block;
+        cursor: pointer;
+
+        &:hover {
+         transform: scale(1.25);
+        }
+      }
+
+      input {
         cursor: pointer;
       }
 
